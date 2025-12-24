@@ -1,0 +1,173 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { PortableText } from "@portabletext/react";
+import Link from "next/link";
+
+interface Stat {
+  label?: string;
+  value?: string;
+}
+
+interface AboutSectionClientProps {
+  profile: {
+    firstName: string | null;
+    lastName: string | null;
+    fullBio: any | null;
+    yearsOfExperience: number | null;
+    stats: Stat[] | null;
+    email: string | null;
+    phone: string | null;
+    location: string | null;
+  };
+}
+
+export function AboutSectionClient({ profile }: AboutSectionClientProps) {
+  return (
+    <section
+      id="about"
+      className="relative py-24 px-6 overflow-hidden bg-white dark:bg-black"
+    >
+      <div className="container mx-auto max-w-6xl relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-16 items-start">
+          {/* Left Column: Title & Stats */}
+          <div className="space-y-12">
+            <div>
+              <motion.span
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-primary font-semibold tracking-wider uppercase text-sm mb-4 block"
+              >
+                Information
+              </motion.span>
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl md:text-6xl font-bold tracking-tighter mb-6 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
+              >
+                About Me
+              </motion.h2>
+              <motion.div
+                initial={{ opacity: 0, scaleX: 0 }}
+                whileInView={{ opacity: 1, scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.8 }}
+                className="h-1 w-20 bg-primary rounded-full origin-left"
+              />
+            </div>
+
+            {/* Stats Grid */}
+            {profile.stats && profile.stats.length > 0 && (
+              <div className="grid grid-cols-2 gap-4">
+                {profile.stats.map((stat, idx) => (
+                  <motion.div
+                    key={`${stat.label}-${idx}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + idx * 0.1 }}
+                    whileHover={{ y: -5 }}
+                    className="p-6 rounded-2xl border bg-card/50 backdrop-blur-sm hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 transition-all group"
+                  >
+                    <div className="text-3xl font-bold bg-linear-to-br from-primary to-primary/60 bg-clip-text text-transparent mb-1 group-hover:scale-110 transition-transform origin-left">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs uppercase tracking-widest text-muted-foreground font-medium">
+                      {stat.label}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column: Bio Content */}
+          <div className="relative">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="prose prose-lg dark:prose-invert max-w-none relative"
+            >
+              {profile.fullBio && (
+                <PortableText
+                  value={profile.fullBio}
+                  components={{
+                    block: {
+                      normal: ({ children }) => (
+                        <p className="text-muted-foreground leading-relaxed mb-6 text-lg">
+                          {children}
+                        </p>
+                      ),
+                      h2: ({ children }) => (
+                        <h2 className="text-3xl font-bold mt-12 mb-6 tracking-tight text-foreground">
+                          {children}
+                        </h2>
+                      ),
+                      h3: ({ children }) => (
+                        <h3 className="text-2xl font-semibold mt-8 mb-4 tracking-tight text-foreground">
+                          {children}
+                        </h3>
+                      ),
+                      blockquote: ({ children }) => (
+                        <div className="relative py-4 pl-8 mb-8">
+                          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-linear-to-b from-primary to-primary/30 rounded-full" />
+                          <blockquote className="italic text-xl text-foreground font-medium">
+                            {children}
+                          </blockquote>
+                        </div>
+                      ),
+                    },
+                    marks: {
+                      strong: ({ children }) => (
+                        <strong className="font-bold text-foreground">
+                          {children}
+                        </strong>
+                      ),
+                      em: ({ children }) => (
+                        <em className="italic text-primary/90">{children}</em>
+                      ),
+                      link: ({ children, value }) => {
+                        const href = value?.href || "";
+                        const isExternal = href.startsWith("http");
+                        return (
+                          <Link
+                            href={href}
+                            target={isExternal ? "_blank" : undefined}
+                            rel={isExternal ? "noopener noreferrer" : undefined}
+                            className="text-primary font-medium underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all"
+                          >
+                            {children}
+                          </Link>
+                        );
+                      },
+                    },
+                    list: {
+                      bullet: ({ children }) => (
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                          {children}
+                        </ul>
+                      ),
+                    },
+                    listItem: {
+                      bullet: ({ children }) => (
+                        <li className="flex items-center gap-3 text-muted-foreground bg-muted/30 p-4 rounded-xl border border-transparent hover:border-primary/20 transition-all">
+                          <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
+                          {children}
+                        </li>
+                      ),
+                    },
+                  }}
+                />
+              )}
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
