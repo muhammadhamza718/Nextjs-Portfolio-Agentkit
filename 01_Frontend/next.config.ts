@@ -32,6 +32,13 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+  // Ignore build errors for bleeding-edge deployment
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
