@@ -1,10 +1,10 @@
 {
-  "name": "next-gen-portfolio-sanity-nextjs-clerk",
+  "name": "agentic-ai-portfolio",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
