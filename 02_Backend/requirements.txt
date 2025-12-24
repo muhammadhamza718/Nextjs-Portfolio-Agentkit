@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+openai-agents[litellm]
+python-dotenv
+sanity
+pydantic
+pytest
+pytest-asyncio
+httpx
