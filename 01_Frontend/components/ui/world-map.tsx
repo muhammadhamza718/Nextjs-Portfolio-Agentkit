@@ -20,16 +20,21 @@ export default function WorldMap({
   lineColor = "#0ea5e9",
 }: MapProps) {
   const { theme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const svgMap = React.useMemo(() => {
     const map = new DottedMap({ height: 100, grid: "diagonal" });
     return map.getSVG({
       radius: 0.22,
-      color: theme === "dark" ? "#FFFFFF40" : "#00000040",
+      color: !mounted || theme === "dark" ? "#FFFFFF40" : "#00000040",
       shape: "circle",
       backgroundColor: "transparent",
     });
-  }, [theme]);
+  }, [theme, mounted]);
 
   const projectPoint = (lat: number, lng: number) => {
     const x = (lng + 180) * (800 / 360);
