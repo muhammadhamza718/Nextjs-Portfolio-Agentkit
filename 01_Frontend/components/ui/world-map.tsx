@@ -21,15 +21,26 @@ export default function WorldMap({
   const { theme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
-  // Store the SVG map permanently - never regenerate it
-  const svgMapRef = React.useRef<string>("");
+  // Store both dark and light theme SVG maps permanently
+  const svgMapDarkRef = React.useRef<string>("");
+  const svgMapLightRef = React.useRef<string>("");
 
-  // Generate the map only once
-  if (!svgMapRef.current) {
+  // Generate both maps only once
+  if (!svgMapDarkRef.current || !svgMapLightRef.current) {
     const map = new DottedMap({ height: 100, grid: "diagonal" });
-    svgMapRef.current = map.getSVG({
+
+    // Dark theme map (white dots)
+    svgMapDarkRef.current = map.getSVG({
       radius: 0.22,
-      color: "#FFFFFF40", // Always use dark theme for consistency
+      color: "#FFFFFF40",
+      shape: "circle",
+      backgroundColor: "transparent",
+    });
+
+    // Light theme map (dark dots)
+    svgMapLightRef.current = map.getSVG({
+      radius: 0.22,
+      color: "#00000040",
       shape: "circle",
       backgroundColor: "transparent",
     });
@@ -62,9 +73,15 @@ export default function WorldMap({
 
   return (
     <div className="w-full aspect-2/1 rounded-lg relative font-sans">
+      {/* Dark theme map */}
       <div
-        className="h-full w-full mask-[linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
-        dangerouslySetInnerHTML={{ __html: svgMapRef.current }}
+        className={`h-full w-full mask-[linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none absolute inset-0 ${mounted && theme === "light" ? "hidden" : "block"}`}
+        dangerouslySetInnerHTML={{ __html: svgMapDarkRef.current }}
+      />
+      {/* Light theme map */}
+      <div
+        className={`h-full w-full mask-[linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none absolute inset-0 ${mounted && theme === "light" ? "block" : "hidden"}`}
+        dangerouslySetInnerHTML={{ __html: svgMapLightRef.current }}
       />
       <svg
         viewBox="0 0 800 400"
