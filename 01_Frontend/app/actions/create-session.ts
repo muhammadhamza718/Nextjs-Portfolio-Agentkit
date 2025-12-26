@@ -20,16 +20,19 @@ export async function createSession() {
       `[Action] Creating session at ${BACKEND_URL}/api/create-session`
     );
 
-    const response = await fetch(`${BACKEND_URL}/api/create-session`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: userId || "anonymous",
-      }),
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${BACKEND_URL.replace(/\/$/, "")}/api/create-session`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId || "anonymous",
+        }),
+        cache: "no-store",
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();

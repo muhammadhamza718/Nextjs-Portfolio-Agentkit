@@ -22,9 +22,14 @@ def init_llm_client() -> AsyncOpenAI:
     """
     Initializes the AsyncOpenAI client using environment variables.
     """
-    api_key = config("GEMINI_API_KEY")
+    api_key = config("GEMINI_API_KEY", default="")
     base_url = config("GEMINI_BASE_URL", default="https://generativelanguage.googleapis.com/v1beta/openai/")
     
+    if not api_key or api_key.startswith("YOUR_"):
+        logger.error("❌ GEMINI_API_KEY is missing or invalid! Agent will fail to respond.")
+    else:
+        logger.info(f"GEMINI_API_KEY found (starts with: {api_key[:4]}...)")
+
     logger.info(f"Initializing AsyncOpenAI client with base_url: {base_url}")
     client = AsyncOpenAI(
         api_key=api_key,

@@ -115,7 +115,11 @@ export function SkillsChart({ skills }: SkillsChartProps) {
                 className="w-full"
                 style={{ height: `${chartHeight}px` }}
               >
-                <ResponsiveContainer width="100%" height={chartHeight}>
+                <ResponsiveContainer
+                  width="100%"
+                  height={chartHeight}
+                  minWidth={0}
+                >
                   <BarChart
                     data={chartData}
                     layout="vertical"

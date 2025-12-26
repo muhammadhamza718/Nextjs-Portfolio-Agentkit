@@ -45,6 +45,9 @@ class PortfolioChatServer(ChatKitServer[dict[str, Any]]):
         items = list(reversed(items_page.data))
         
         # 2. Convert to format the Agent understands
+        if item:
+            logger.info(f"Incoming message from user: {item.text if hasattr(item, 'text') else 'No text'}")
+        
         agent_input = await simple_to_agent_input(items)
         logger.info(f"Last 2 items in history: {items[-2:] if len(items) >= 2 else items}")
         logger.debug(f"Converted agent input: {agent_input}")

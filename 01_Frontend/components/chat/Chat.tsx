@@ -31,13 +31,17 @@ function ChatComponent({
   // Prevent hydration mismatch by only rendering after mount
   useEffect(() => {
     setMounted(true);
-  }, []);
+    console.log(
+      "ChatKit initialized with Backend URL:",
+      `${backendUrl.replace(/\/$/, "")}/chatkit`
+    );
+  }, [backendUrl]);
 
   // Stabilize options to prevent re-initialization loops
   const chatkitOptions: ChatKitOptions = useMemo(
     () => ({
       api: {
-        url: `${backendUrl}/chatkit`,
+        url: `${backendUrl.replace(/\/$/, "")}/chatkit`,
         domainKey: "domain_pk_694e660b27cc8194af36166984c678920dffab26d4b3cd54", // ✅ Production domain key
       },
       header: {

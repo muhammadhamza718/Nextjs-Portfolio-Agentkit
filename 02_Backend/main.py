@@ -22,6 +22,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Incoming: {request.method} {request.url.path}")
+    response = await call_next(request)
+    logger.info(f"Outgoing Status: {response.status_code}")
+    return response
+
 # Initialize the one-and-only ChatKit server
 chatkit_server = PortfolioChatServer()
 
@@ -30,10 +37,12 @@ async def root():
     return {"message": "Portfolio AI Twin API is Online", "status": "running"}
 
 @app.post("/chatkit")
+@app.post("//chatkit")
+@app.post("/api/chatkit")
+@app.post("//api/chatkit")
 async def chatkit_endpoint(request: Request) -> Response:
-    """ Unified endpoint for ChatKit Handshake, Session, and Messages.
-    This 'forces' the frontend to initialize by speaking the correct protocol.
-    """
+    """ Unified endpoint for ChatKit Handshake, Session, and Messages. """
+    logger.info(f"ChatKit request received at path: {request.url.path}")
     try:
         payload = await request.body()
         # The 'context' can store user info or headers
