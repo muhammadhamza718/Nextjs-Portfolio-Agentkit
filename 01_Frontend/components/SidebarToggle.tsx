@@ -1,7 +1,7 @@
 "use client";
 
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { MessageSquare, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useSidebar } from "./ui/sidebar";
 
 function SidebarToggle() {
@@ -13,23 +13,23 @@ function SidebarToggle() {
   if (isSidebarOpen) return null;
 
   const buttonStyles = `relative w-16 h-16 rounded-full 
-    bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 
-    dark:from-violet-600 dark:via-purple-600 dark:to-fuchsia-600 
-    shadow-[0_0_40px_rgba(168,85,247,0.4)] 
-    hover:shadow-[0_0_60px_rgba(168,85,247,0.6)] 
-    transition-all duration-500 
-    hover:scale-110 hover:rotate-12 
-    flex items-center justify-center`;
+    bg-white dark:bg-black
+    border-2 border-neutral-200 dark:border-neutral-700
+    shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(255,255,255,0.1)]
+    hover:shadow-[0_12px_40px_rgba(0,0,0,0.18)] dark:hover:shadow-[0_12px_40px_rgba(255,255,255,0.15)]
+    transition-all duration-300
+    hover:scale-105
+    flex items-center justify-center
+    overflow-hidden`;
 
   return (
     <div className="fixed bottom-6 right-6 z-50 group">
-      {/* Animated rings */}
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 opacity-20 blur-2xl animate-ping [animation-duration:2s]" />
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 opacity-30 blur-xl animate-pulse [animation-duration:3s]" />
+      {/* Animated subtle glow rings */}
+      <div className="absolute inset-0 rounded-full bg-gradient-to-r from-neutral-300 to-neutral-400 dark:from-neutral-600 dark:to-neutral-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500" />
 
       {/* Sparkle badge */}
       <div className="absolute -top-1 -right-1 z-10">
-        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg flex items-center justify-center animate-bounce [animation-duration:2s]">
+        <div className="h-6 w-6 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 shadow-lg flex items-center justify-center animate-bounce [animation-duration:2s]">
           <Sparkles className="h-3 w-3 text-white" />
         </div>
       </div>
@@ -48,7 +48,13 @@ function SidebarToggle() {
           className={buttonStyles}
           aria-label="Chat with AI Twin"
         >
-          <MessageSquare className="h-7 w-7 text-white transition-transform group-hover:scale-110" />
+          {/* Pulsing internal glow */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 dark:from-blue-500/20 dark:to-purple-500/20 animate-pulse" />
+
+          {/* Letter H */}
+          <span className="relative text-4xl font-black bg-gradient-to-br from-neutral-800 to-neutral-600 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent transition-transform group-hover:scale-110">
+            H
+          </span>
         </button>
       ) : (
         <SignInButton mode="modal">
@@ -57,7 +63,13 @@ function SidebarToggle() {
             className={buttonStyles}
             aria-label="Sign in to chat with AI Twin"
           >
-            <MessageSquare className="h-7 w-7 text-white transition-transform group-hover:scale-110" />
+            {/* Pulsing internal glow */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400/20 to-purple-400/20 dark:from-blue-500/20 dark:to-purple-500/20 animate-pulse" />
+
+            {/* Letter H */}
+            <span className="relative text-4xl font-black bg-gradient-to-br from-neutral-800 to-neutral-600 dark:from-white dark:to-neutral-300 bg-clip-text text-transparent transition-transform group-hover:scale-110">
+              H
+            </span>
           </button>
         </SignInButton>
       )}
