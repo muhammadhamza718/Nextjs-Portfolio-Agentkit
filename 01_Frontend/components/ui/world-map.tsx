@@ -3,7 +3,6 @@
 import * as React from "react";
 import DottedMap from "dotted-map";
 import { motion } from "motion/react";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRef } from "react";
 
@@ -59,12 +58,10 @@ export default function WorldMap({
 
   return (
     <div className="w-full aspect-2/1 rounded-lg relative font-sans">
-      <Image
+      <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full mask-[linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
         alt="world map showing global connectivity"
-        height={495}
-        width={1056}
         draggable={false}
       />
       <svg
