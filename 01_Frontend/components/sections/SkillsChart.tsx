@@ -115,48 +115,55 @@ export function SkillsChart({ skills }: SkillsChartProps) {
                 className="w-full"
                 style={{ height: `${chartHeight}px` }}
               >
-                <BarChart
-                  data={chartData}
-                  layout="vertical"
-                  margin={{ left: -10, right: 40, top: 10, bottom: 10 }}
-                  barGap={12}
-                >
-                  <XAxis type="number" hide domain={[0, 100]} tick={{ fill: "currentColor" }} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    tickLine={false}
-                    axisLine={false}
-                    width={110} // Increased width for labels
-                    className="text-[13px] font-medium fill-foreground"
-                    tick={{ fill: "currentColor" }}
-                  />
-                  <ChartTooltip
-                    cursor={{ fill: "rgba(var(--primary), 0.05)", radius: 4 }}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <Bar
-                    dataKey="proficiency"
-                    radius={[0, 10, 10, 0]}
-                    barSize={20}
+                <ResponsiveContainer width="100%" height={chartHeight}>
+                  <BarChart
+                    data={chartData}
+                    layout="vertical"
+                    margin={{ left: -10, right: 40, top: 10, bottom: 10 }}
+                    barGap={12}
                   >
-                    {chartData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={entry.color}
-                        className="transition-all duration-300 filter group-hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.3)]"
-                      />
-                    ))}
-                    <LabelList
-                      dataKey="proficiency"
-                      position="right"
-                      offset={12}
-                      className="fill-foreground text-xs"
-                      formatter={(val: any) => `${val}%`}
-                      fill="currentColor"
+                    <XAxis
+                      type="number"
+                      hide
+                      domain={[0, 100]}
+                      tick={{ fill: "currentColor" }}
                     />
-                  </Bar>
-                </BarChart>
+                    <YAxis
+                      dataKey="name"
+                      type="category"
+                      tickLine={false}
+                      axisLine={false}
+                      width={110} // Increased width for labels
+                      className="text-[13px] font-medium fill-foreground"
+                      tick={{ fill: "currentColor" }}
+                    />
+                    <ChartTooltip
+                      cursor={{ fill: "rgba(var(--primary), 0.05)", radius: 4 }}
+                      content={<ChartTooltipContent hideLabel />}
+                    />
+                    <Bar
+                      dataKey="proficiency"
+                      radius={[0, 10, 10, 0]}
+                      barSize={20}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.color}
+                          className="transition-all duration-300 filter group-hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.3)]"
+                        />
+                      ))}
+                      <LabelList
+                        dataKey="proficiency"
+                        position="right"
+                        offset={12}
+                        className="fill-foreground text-xs"
+                        formatter={(val: any) => `${val}%`}
+                        fill="currentColor"
+                      />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </ChartContainer>
             </div>
 
