@@ -1,6 +1,7 @@
 "use client";
 
 import { ChatKit, useChatKit } from "@openai/chatkit-react";
+import type { ChatKitOptions, HeaderIcon } from "@openai/chatkit-react";
 import type { CHAT_PROFILE_QUERYResult } from "@/sanity.types";
 import { useSidebar } from "../ui/sidebar";
 import { useTheme } from "next-themes";
@@ -33,11 +34,11 @@ function ChatComponent({
   }, []);
 
   // Stabilize options to prevent re-initialization loops
-  const chatkitOptions = useMemo(
+  const chatkitOptions: ChatKitOptions = useMemo(
     () => ({
       api: {
         url: `${backendUrl}/chatkit`,
-        domainKey: "domain_pk_localhost_dev", // �️ Official dev fallback
+        domainKey: "domain_pk_694e660b27cc8194af36166984c678920dffab26d4b3cd54", // ✅ Production domain key
       },
       header: {
         title: {
@@ -46,66 +47,45 @@ function ChatComponent({
             : "Portfolio Assistant",
         },
         leftAction: {
-          icon: "close",
+          icon: "close" as HeaderIcon,
           onClick: toggleSidebar,
         },
       },
-      theme: {
-        color: {
-          grayscale: { hue: 220, tint: 1, shade: isDark ? -1 : -4 },
-          accent: { primary: "#3b82f6", level: 1 },
-        },
-        radius: "soft",
-      },
-      startScreen: {
-        greeting: `Hello! I'm ${profile?.firstName || "John"}. How can I help you today?`,
-        prompts: [
-          {
-            icon: "suitcase",
-            label: "Work",
-            prompt: "Tell me about your tech background",
-          },
-          {
-            icon: "square-code",
-            label: "Skills",
-            prompt: "What technologies do you specialize in?",
-          },
-          {
-            icon: "cube",
-            label: "Projects",
-            prompt: "Show me your top-rated projects",
-          },
-        ],
-      },
+      theme: (isDark ? "dark" : "light") as "dark" | "light",
     }),
-    [backendUrl, isDark, profile, toggleSidebar]
+    [backendUrl, profile?.firstName, toggleSidebar, isDark]
   );
 
-  const { control } = useChatKit(chatkitOptions as any);
+  // Initialize ChatKit once with stable options
+  const { control } = useChatKit(chatkitOptions);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-pulse text-muted-foreground">
+          Loading chat...
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div 
-      className="flex-1 flex flex-col w-full h-full min-h-0 bg-background border-l relative overflow-hidden"
-      suppressHydrationWarning
-    >
-      {/* Container MUST have height for ChatKit to render internally */}
-      <div className="flex-1 h-full w-full">
-        <ChatKit control={control} className="h-full w-full block" />
-      </div>
-
-      {/* Visual Identity Overlay (Optional) */}
-      <div className="absolute top-3 right-12 z-10 pointer-events-none opacity-20 hidden md:block">
-        <span className="text-[7px] font-mono tracking-[0.3em] uppercase">
-          Twin Interface v2.0
-        </span>
-      </div>
+    <div className="w-full h-full overflow-hidden">
+      <ChatKit control={control} />
     </div>
   );
 }
 
-// Ensure no SSR to avoid hydration mismatches with the ChatKit engine
-const Chat = dynamic(() => Promise.resolve(ChatComponent), { ssr: false });
+// Dynamically import to avoid SSR issues
+const Chat = dynamic(() => Promise.resolve(ChatComponent), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center h-full">
+      <div className="animate-pulse text-muted-foreground">
+        Initializing chat...
+      </div>
+    </div>
+  ),
+});
 
 export default Chat;
