@@ -1,11 +1,3 @@
-The `02_Backend` directory shows a Python-based backend. Key files include `main.py`, `server.py`, and `requirements.txt`, indicating a Python application likely built with a framework like FastAPI or Flask. There are also files related to agents (`agent.py`), data handling (`memory_store.py`, `sanity_client.py`), and testing (`test_profile.py`). The presence of `Dockerfile` suggests containerization support.
-
-With this initial exploration, I have a good overview of the project's structure and components. I can now proceed to generate the README.md.
-
-Here's the generated README.md for `muhammadhamza718/Nextjs-Portfolio-Agentkit`:
-
----
-
 # Next.js Portfolio AgentKit 🚀
 
 **Empowering Your Digital Presence with an AI-Driven Portfolio**
