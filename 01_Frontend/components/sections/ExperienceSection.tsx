@@ -4,6 +4,13 @@ import { defineQuery } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
 
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+  });
+};
+
 const EXPERIENCE_QUERY =
   defineQuery(`*[_type == "experience"] | order(startDate desc){
   company,
@@ -23,17 +30,6 @@ const EXPERIENCE_QUERY =
 
 export async function ExperienceSection() {
   const { data: experiences } = await sanityFetch({ query: EXPERIENCE_QUERY });
-
-  if (!experiences || experiences.length === 0) {
-    return null;
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    });
-  };
 
   return (
     <section id="experience" className="py-20 px-6">

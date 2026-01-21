@@ -5,6 +5,43 @@ import { defineQuery } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
 
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+  });
+};
+
+const getTypeColor = (type: string | null | undefined) => {
+  if (!type) return "bg-gray-500/10 text-gray-500";
+  const colors: Record<string, string> = {
+    award: "bg-yellow-500/10 text-yellow-500",
+    hackathon: "bg-purple-500/10 text-purple-500",
+    publication: "bg-blue-500/10 text-blue-500",
+    speaking: "bg-green-500/10 text-green-500",
+    "open-source": "bg-orange-500/10 text-orange-500",
+    milestone: "bg-pink-500/10 text-pink-500",
+    recognition: "bg-cyan-500/10 text-cyan-500",
+    other: "bg-gray-500/10 text-gray-500",
+  };
+  return colors[type] || colors.other;
+};
+
+const getTypeLabel = (type: string | null | undefined) => {
+  if (!type) return "Achievement";
+  const labels: Record<string, string> = {
+    award: "Award",
+    hackathon: "Hackathon Win",
+    publication: "Publication",
+    speaking: "Speaking",
+    "open-source": "Open Source",
+    milestone: "Milestone",
+    recognition: "Recognition",
+    other: "Other",
+  };
+  return labels[type] || "Achievement";
+};
+
 const ACHIEVEMENTS_QUERY =
   defineQuery(`*[_type == "achievement"] | order(date desc){
   title,
@@ -22,47 +59,6 @@ export async function AchievementsSection() {
   const { data: achievements } = await sanityFetch({
     query: ACHIEVEMENTS_QUERY,
   });
-
-  if (!achievements || achievements.length === 0) {
-    return null;
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-    });
-  };
-
-  const getTypeColor = (type: string | null | undefined) => {
-    if (!type) return "bg-gray-500/10 text-gray-500";
-    const colors: Record<string, string> = {
-      award: "bg-yellow-500/10 text-yellow-500",
-      hackathon: "bg-purple-500/10 text-purple-500",
-      publication: "bg-blue-500/10 text-blue-500",
-      speaking: "bg-green-500/10 text-green-500",
-      "open-source": "bg-orange-500/10 text-orange-500",
-      milestone: "bg-pink-500/10 text-pink-500",
-      recognition: "bg-cyan-500/10 text-cyan-500",
-      other: "bg-gray-500/10 text-gray-500",
-    };
-    return colors[type] || colors.other;
-  };
-
-  const getTypeLabel = (type: string | null | undefined) => {
-    if (!type) return "Achievement";
-    const labels: Record<string, string> = {
-      award: "Award",
-      hackathon: "Hackathon Win",
-      publication: "Publication",
-      speaking: "Speaking",
-      "open-source": "Open Source",
-      milestone: "Milestone",
-      recognition: "Recognition",
-      other: "Other",
-    };
-    return labels[type] || "Achievement";
-  };
 
   // Separate featured and regular achievements
   const featured = achievements.filter((a) => a.featured);

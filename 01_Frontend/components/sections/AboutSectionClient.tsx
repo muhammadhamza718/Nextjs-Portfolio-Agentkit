@@ -3,6 +3,70 @@
 import { motion } from "framer-motion";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
+import type { PortableTextComponents } from "@portabletext/react";
+
+const PORTABLE_TEXT_COMPONENTS: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <p className="text-muted-foreground leading-relaxed mb-6 text-lg">
+        {children}
+      </p>
+    ),
+    h2: ({ children }) => (
+      <h2 className="text-3xl font-bold mt-12 mb-6 tracking-tight text-foreground">
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="text-2xl font-semibold mt-8 mb-4 tracking-tight text-foreground">
+        {children}
+      </h3>
+    ),
+    blockquote: ({ children }) => (
+      <div className="relative py-4 pl-8 mb-8">
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-linear-to-b from-primary to-primary/30 rounded-full" />
+        <blockquote className="italic text-xl text-foreground font-medium">
+          {children}
+        </blockquote>
+      </div>
+    ),
+  },
+  marks: {
+    strong: ({ children }) => (
+      <strong className="font-bold text-foreground">{children}</strong>
+    ),
+    em: ({ children }) => (
+      <em className="italic text-primary/90">{children}</em>
+    ),
+    link: ({ children, value }) => {
+      const href = value?.href || "";
+      const isExternal = href.startsWith("http");
+      return (
+        <Link
+          href={href}
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noopener noreferrer" : undefined}
+          className="text-primary font-medium underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all"
+        >
+          {children}
+        </Link>
+      );
+    },
+  },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">{children}</ul>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => (
+      <li className="flex items-center gap-3 text-muted-foreground bg-muted/30 p-4 rounded-xl border border-transparent hover:border-primary/20 transition-all">
+        <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
+        {children}
+      </li>
+    ),
+  },
+};
 
 interface Stat {
   label?: string;
@@ -98,72 +162,7 @@ export function AboutSectionClient({
               {profile.fullBio && (
                 <PortableText
                   value={profile.fullBio}
-                  components={{
-                    block: {
-                      normal: ({ children }) => (
-                        <p className="text-muted-foreground leading-relaxed mb-6 text-lg">
-                          {children}
-                        </p>
-                      ),
-                      h2: ({ children }) => (
-                        <h2 className="text-3xl font-bold mt-12 mb-6 tracking-tight text-foreground">
-                          {children}
-                        </h2>
-                      ),
-                      h3: ({ children }) => (
-                        <h3 className="text-2xl font-semibold mt-8 mb-4 tracking-tight text-foreground">
-                          {children}
-                        </h3>
-                      ),
-                      blockquote: ({ children }) => (
-                        <div className="relative py-4 pl-8 mb-8">
-                          <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-linear-to-b from-primary to-primary/30 rounded-full" />
-                          <blockquote className="italic text-xl text-foreground font-medium">
-                            {children}
-                          </blockquote>
-                        </div>
-                      ),
-                    },
-                    marks: {
-                      strong: ({ children }) => (
-                        <strong className="font-bold text-foreground">
-                          {children}
-                        </strong>
-                      ),
-                      em: ({ children }) => (
-                        <em className="italic text-primary/90">{children}</em>
-                      ),
-                      link: ({ children, value }) => {
-                        const href = value?.href || "";
-                        const isExternal = href.startsWith("http");
-                        return (
-                          <Link
-                            href={href}
-                            target={isExternal ? "_blank" : undefined}
-                            rel={isExternal ? "noopener noreferrer" : undefined}
-                            className="text-primary font-medium underline decoration-primary/30 underline-offset-4 hover:decoration-primary transition-all"
-                          >
-                            {children}
-                          </Link>
-                        );
-                      },
-                    },
-                    list: {
-                      bullet: ({ children }) => (
-                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                          {children}
-                        </ul>
-                      ),
-                    },
-                    listItem: {
-                      bullet: ({ children }) => (
-                        <li className="flex items-center gap-3 text-muted-foreground bg-muted/30 p-4 rounded-xl border border-transparent hover:border-primary/20 transition-all">
-                          <span className="h-2 w-2 rounded-full bg-primary shrink-0" />
-                          {children}
-                        </li>
-                      ),
-                    },
-                  }}
+                  components={PORTABLE_TEXT_COMPONENTS}
                 />
               )}
             </motion.div>

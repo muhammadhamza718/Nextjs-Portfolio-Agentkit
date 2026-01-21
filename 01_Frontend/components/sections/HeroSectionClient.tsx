@@ -9,10 +9,32 @@ import { Button } from "@/components/ui/button";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 
 interface HeroSectionClientProps {
-  profile: any;
+  profile: {
+    firstName: string | null;
+    lastName: string | null;
+    headline: string | null;
+    headlineStaticText?: string | null;
+    headlineAnimatedWords?: string[] | null;
+    headlineAnimationDuration?: number | null;
+    shortBio: string | null;
+    email: string | null;
+    location: string | null;
+    availability: string | null;
+    socialLinks?: Record<string, string | null> | null;
+    profileImage?: any;
+  };
 }
 
-export function HeroSectionClient({ profile }: HeroSectionClientProps) {
+const SOCIAL_LABEL_MAPPING: Record<string, string> = {
+  github: "GitHub",
+  linkedin: "LinkedIn",
+  twitter: "Twitter",
+  x: "X",
+};
+
+export function HeroSectionClient({
+  profile,
+}: Readonly<HeroSectionClientProps>) {
   const fullName = `${profile.firstName} ${profile.lastName}`;
   const words = fullName.split(" ");
 
@@ -76,14 +98,8 @@ export function HeroSectionClient({ profile }: HeroSectionClientProps) {
                       if (!url || typeof url !== "string") return null;
                       if (key === "website" || key === "_type") return null;
 
-                      const labelMapping: Record<string, string> = {
-                        github: "GitHub",
-                        linkedin: "LinkedIn",
-                        twitter: "Twitter",
-                        x: "X",
-                      };
                       const label =
-                        labelMapping[key.toLowerCase()] ||
+                        SOCIAL_LABEL_MAPPING[key.toLowerCase()] ||
                         key.charAt(0).toUpperCase() + key.slice(1);
 
                       return (
