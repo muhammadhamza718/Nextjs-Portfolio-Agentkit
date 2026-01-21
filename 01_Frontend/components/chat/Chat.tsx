@@ -55,7 +55,7 @@ function ChatComponent({
           onClick: toggleSidebar,
         },
       },
-      theme: (isDark ? "dark" : "light") as "dark" | "light",
+      theme: isDark ? "dark" : "light",
     }),
     [backendUrl, profile?.firstName, toggleSidebar, isDark],
   );
