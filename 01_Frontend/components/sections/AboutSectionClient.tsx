@@ -13,7 +13,7 @@ interface AboutSectionClientProps {
   profile: {
     firstName: string | null;
     lastName: string | null;
-    fullBio: any | null;
+    fullBio: import("@portabletext/types").PortableTextBlock[] | null;
     yearsOfExperience: number | null;
     stats: Stat[] | null;
     email: string | null;
