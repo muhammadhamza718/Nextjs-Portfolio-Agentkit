@@ -22,7 +22,9 @@ interface AboutSectionClientProps {
   };
 }
 
-export function AboutSectionClient({ profile }: AboutSectionClientProps) {
+export function AboutSectionClient({
+  profile,
+}: Readonly<AboutSectionClientProps>) {
   return (
     <section
       id="about"
