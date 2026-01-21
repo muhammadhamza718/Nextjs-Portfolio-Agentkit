@@ -20,15 +20,25 @@ set_tracing_disabled(True)
 
 def init_llm_client() -> AsyncOpenAI:
     """
-    Initializes the AsyncOpenAI client using environment variables.
+    Initializes the AsyncOpenAI client with failover support for multiple API keys.
+    Checks GEMINI_API_KEY first, then falls back to GEMINI_API_KEY_2 if the first is missing.
     """
-    api_key = config("GEMINI_API_KEY", default="")
+    # 1. Try Primary Key
+    api_key = config("GEMINI_API_KEY", default="").strip()
+    key_source = "Primary (GEMINI_API_KEY)"
+
+    # 2. Fallback to Secondary Key if primary is empty
+    if not api_key or api_key.startswith("YOUR_"):
+        logger.warning("⚠️ Primary GEMINI_API_KEY missing, trying backup key...")
+        api_key = config("GEMINI_API_KEY_2", default="").strip()
+        key_source = "Backup (GEMINI_API_KEY_2)"
+
     base_url = config("GEMINI_BASE_URL", default="https://generativelanguage.googleapis.com/v1beta/openai/")
     
     if not api_key or api_key.startswith("YOUR_"):
-        logger.error("❌ GEMINI_API_KEY is missing or invalid! Agent will fail to respond.")
+        logger.error("❌ No valid GEMINI_API_KEY found! All keys are missing or invalid.")
     else:
-        logger.info(f"GEMINI_API_KEY found (starts with: {api_key[:4]}...)")
+        logger.info(f"✅ Using {key_source} (starts with: {api_key[:4]}...)")
 
     logger.info(f"Initializing AsyncOpenAI client with base_url: {base_url}")
     client = AsyncOpenAI(
@@ -86,7 +96,8 @@ def create_portfolio_agent(personality: str = "clear") -> Agent:
     # We use the tool's logic directly to ensure consistency
     try:
         from tools import get_profile
-        profile_info = get_profile()
+        # get_profile is a FunctionTool object, call the underlying function .fn()
+        profile_info = get_profile.fn() if hasattr(get_profile, 'fn') else get_profile()
     except Exception as e:
         logger.error(f"Error fetching profile for agent initialization: {e}")
         profile_info = "Profile information unavailable."

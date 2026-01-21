@@ -14,7 +14,7 @@ from chatkit.types import ThreadMetadata, ThreadStreamEvent, UserMessageItem
 from agents import Runner
 
 # Import your agent creation logic
-from agent import create_portfolio_agent
+from agent import create_portfolio_agent, GEMINI_MODEL_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -38,21 +38,26 @@ class PortfolioChatServer(ChatKitServer[dict[str, Any]]):
         items_page = await self.store.load_thread_items(
             thread.id,
             after=None,
-            limit=20,
+            limit=50, # Increased limit for better context
             order="desc",
             context=context
         )
         items = list(reversed(items_page.data))
         
+        # LOGGING: Track exact order and IDs
+        logger.info(f"--- Turn Start for Thread {thread.id} ---")
+        for i, itm in enumerate(items):
+            role = getattr(itm, 'role', 'unknown')
+            text_preview = (itm.text[:30] + "...") if hasattr(itm, 'text') and itm.text else "N/A"
+            logger.info(f"History[{i}]: ID={itm.id} ROLE={role} TEXT={text_preview}")
+
         # 2. Convert to format the Agent understands
         if item:
-            logger.info(f"Incoming message from user: {item.text if hasattr(item, 'text') else 'No text'}")
+            logger.info(f"Incoming item ID: {item.id}, Text: '{item.text if hasattr(item, 'text') else 'N/A'}'")
         
         agent_input = await simple_to_agent_input(items)
-        logger.info(f"Last 2 items in history: {items[-2:] if len(items) >= 2 else items}")
-        logger.debug(f"Converted agent input: {agent_input}")
-
-        # 3. Create the Portfolio Agent (personality from metadata if exists)
+        
+        # 3. Create the Portfolio Agent
         personality = thread.metadata.get("personality", "clear")
         agent = create_portfolio_agent(personality=personality)
 
@@ -63,27 +68,32 @@ class PortfolioChatServer(ChatKitServer[dict[str, Any]]):
             request_context=context,
         )
 
-        # 5. Run the Agent (using LiteLLM + Gemini)
-        logger.info(f"Streaming response for thread {thread.id} [Personality: {personality}]")
-        logger.debug(f"Starting Runner.run_streamed with input: {agent_input}")
-        
-        # Use Runner.run_streamed which is the engine for the Agent SDK
+        # 5. Run the Agent
+        logger.info(f"Runner start: model={GEMINI_MODEL_NAME}, personality={personality}")
         result = Runner.run_streamed(
             agent,
             agent_input,
             context=agent_context,
         )
 
-        # 6. Stream back to ChatKit UI in the correct protocol format
+        # 6. Stream back to ChatKit UI
+        yielded_count = 0
+        last_item_id = None
+        
         try:
             async for event in stream_agent_response(agent_context, result):
-                logger.debug(f"Yielding event: {event.type}")
-                # Log any assistant message text for debugging silence
-                if event.type == "thread.item.updated" and hasattr(event, 'update'):
-                    update = event.update
-                    if hasattr(update, 'delta') and isinstance(update.delta, str):
-                        logger.debug(f"Message delta: '{update.delta}'")
+                yielded_count += 1
+                
+                # Capture the ID of the assistant message we are sending
+                if event.type == "thread.item.created" or event.type == "thread.item.updated":
+                    last_item_id = event.item.id if hasattr(event, 'item') else last_item_id
+                
+                if yielded_count % 10 == 0:
+                    logger.debug(f"Streaming in progress... yielded {yielded_count} events")
+                
                 yield event
+            
+            logger.info(f"--- Turn End: Response finished for ID {last_item_id}. Total events: {yielded_count} ---")
         except Exception as e:
             logger.exception(f"Error during stream_agent_response: {str(e)}")
             # Don't re-raise, maybe we yielded something useful

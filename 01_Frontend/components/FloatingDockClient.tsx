@@ -15,7 +15,7 @@ interface NavItem {
 }
 
 interface FloatingDockClientProps {
-  navItems: NavItem[];
+  readonly navItems: readonly NavItem[];
 }
 
 interface DockLink {
@@ -38,7 +38,7 @@ const getVisibleLinks = (links: DockLink[], maxItems: number) => {
   };
 };
 
-export function FloatingDockClient({ navItems }: FloatingDockClientProps) {
+export function FloatingDockClient({ navItems }: Readonly<FloatingDockClientProps>) {
   const { isSignedIn } = useUser();
   const { signOut } = useClerk();
   const { open, isMobile, openMobile } = useSidebar();

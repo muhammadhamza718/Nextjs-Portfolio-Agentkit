@@ -13,6 +13,8 @@ class MemoryStore(Store[dict]):
     def __init__(self):
         self.threads: dict[str, ThreadMetadata] = {}
         self.items: dict[str, list[ThreadItem]] = defaultdict(list)
+        self._item_counts: dict[str, int] = defaultdict(int)
+        self._item_indices: dict[str, dict[str, int]] = defaultdict(dict)
 
     async def load_thread(self, thread_id: str, context: dict) -> ThreadMetadata:
         if thread_id not in self.threads:
@@ -44,12 +46,15 @@ class MemoryStore(Store[dict]):
         self, thread_id: str, after: str | None, limit: int, order: str, context: dict
     ) -> Page[ThreadItem]:
         items = self.items.get(thread_id, [])
+        indices = self._item_indices[thread_id]
+        
         return self._paginate(
             items,
             after,
             limit,
             order,
-            sort_key=lambda i: i.created_at,
+            # Use created_at + original insertion index for perfect stable sorting
+            sort_key=lambda i: (i.created_at, indices.get(i.id, 0)),
             cursor_key=lambda i: i.id,
         )
 
@@ -57,6 +62,8 @@ class MemoryStore(Store[dict]):
         self, thread_id: str, item: ThreadItem, context: dict
     ) -> None:
         self.items[thread_id].append(item)
+        self._item_counts[thread_id] += 1
+        self._item_indices[thread_id][item.id] = self._item_counts[thread_id]
 
     async def save_item(self, thread_id: str, item: ThreadItem, context: dict) -> None:
         items = self.items[thread_id]
