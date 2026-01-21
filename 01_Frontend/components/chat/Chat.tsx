@@ -17,9 +17,9 @@ import dynamic from "next/dynamic";
 
 function ChatComponent({
   profile,
-}: {
+}: Readonly<{
   profile: CHAT_PROFILE_QUERYResult | null;
-}) {
+}>) {
   const { toggleSidebar } = useSidebar();
   const { resolvedTheme, theme: activeTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -33,7 +33,7 @@ function ChatComponent({
     setMounted(true);
     console.log(
       "ChatKit initialized with Backend URL:",
-      `${backendUrl.replace(/\/$/, "")}/chatkit`
+      `${backendUrl.replace(/\/$/, "")}/chatkit`,
     );
   }, [backendUrl]);
 
@@ -57,7 +57,7 @@ function ChatComponent({
       },
       theme: (isDark ? "dark" : "light") as "dark" | "light",
     }),
-    [backendUrl, profile?.firstName, toggleSidebar, isDark]
+    [backendUrl, profile?.firstName, toggleSidebar, isDark],
   );
 
   // Initialize ChatKit once with stable options
