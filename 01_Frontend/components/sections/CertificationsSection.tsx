@@ -6,6 +6,19 @@ import { CometCard } from "@/components/ui/comet-card";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
 
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const isExpired = (expiryDate: string | null | undefined) => {
+  if (!expiryDate) return false;
+  return new Date(expiryDate) < new Date();
+};
+
 const CERTIFICATIONS_QUERY =
   defineQuery(`*[_type == "certification"] | order(issueDate desc){
   name,
@@ -24,23 +37,6 @@ export async function CertificationsSection() {
   const { data: certifications } = await sanityFetch({
     query: CERTIFICATIONS_QUERY,
   });
-
-  if (!certifications || certifications.length === 0) {
-    return null;
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const isExpired = (expiryDate: string | null | undefined) => {
-    if (!expiryDate) return false;
-    return new Date(expiryDate) < new Date();
-  };
 
   return (
     <section id="certifications" className="py-20 px-6 bg-muted/30">

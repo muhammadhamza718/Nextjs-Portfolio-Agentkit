@@ -5,6 +5,13 @@ import { defineQuery } from "next-sanity";
 import { urlFor } from "@/sanity/lib/image";
 import { sanityFetch } from "@/sanity/lib/live";
 
+const formatDate = (date: string) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+  });
+};
+
 const EDUCATION_QUERY =
   defineQuery(`*[_type == "education"] | order(endDate desc, startDate desc){
   institution,
@@ -23,17 +30,6 @@ const EDUCATION_QUERY =
 
 export async function EducationSection() {
   const { data: education } = await sanityFetch({ query: EDUCATION_QUERY });
-
-  if (!education || education.length === 0) {
-    return null;
-  }
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    });
-  };
 
   return (
     <section
