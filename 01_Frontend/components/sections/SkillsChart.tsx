@@ -150,9 +150,9 @@ export function SkillsChart({ skills }: SkillsChartProps) {
                       radius={[0, 10, 10, 0]}
                       barSize={20}
                     >
-                      {chartData.map((entry, index) => (
+                      {chartData.map((entry) => (
                         <Cell
-                          key={`cell-${index}`}
+                          key={`cell-${category}-${entry.name}`}
                           fill={entry.color}
                           className="transition-all duration-300 filter group-hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.3)]"
                         />
