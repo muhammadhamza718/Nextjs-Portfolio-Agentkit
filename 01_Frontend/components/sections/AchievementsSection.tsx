@@ -60,6 +60,10 @@ export async function AchievementsSection() {
     query: ACHIEVEMENTS_QUERY,
   });
 
+  if (!achievements || achievements.length === 0) {
+    return null;
+  }
+
   // Separate featured and regular achievements
   const featured = achievements.filter((a) => a.featured);
   const regular = achievements.filter((a) => !a.featured);

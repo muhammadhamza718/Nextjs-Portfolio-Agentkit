@@ -31,6 +31,10 @@ const EDUCATION_QUERY =
 export async function EducationSection() {
   const { data: education } = await sanityFetch({ query: EDUCATION_QUERY });
 
+  if (!education || education.length === 0) {
+    return null;
+  }
+
   return (
     <section
       id="education"
