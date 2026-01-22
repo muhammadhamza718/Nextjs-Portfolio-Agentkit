@@ -31,6 +31,10 @@ const EXPERIENCE_QUERY =
 export async function ExperienceSection() {
   const { data: experiences } = await sanityFetch({ query: EXPERIENCE_QUERY });
 
+  if (!experiences || experiences.length === 0) {
+    return null;
+  }
+
   return (
     <section id="experience" className="py-20 px-6">
       <div className="container mx-auto max-w-6xl">

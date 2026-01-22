@@ -28,6 +28,10 @@ export async function BlogSection() {
     query: BLOG_QUERY,
   });
 
+  if (!posts || posts.length === 0) {
+    return null;
+  }
+
   return (
     <section id="blog" className="py-20 px-6 bg-muted/30">
       <div className="container mx-auto max-w-6xl">
