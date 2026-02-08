@@ -2,7 +2,7 @@
 
 **Empowering Your Digital Presence with an AI-Driven Portfolio**
 
-This project integrates a dynamic Next.js frontend with a robust Python backend, enhanced by AI capabilities, to create an intelligent and interactive personal portfolio. It's designed to showcase your work, skills, and projects in a uniquely engaging way, leveraging AI to personalize the user experience and manage content efficiently
+This project integrates a dynamic Next.js frontend with a robust Python backend, enhanced by AI capabilities, to create an intelligent and interactive personal portfolio. It's designed to showcase your work, skills, and projects in a uniquely engaging way, leveraging AI to personalize the user experience and manage content efficiently.
 
 ## Table of Contents
 
